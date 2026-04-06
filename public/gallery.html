@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Live Photo Gallery</title>
+
+<style>
+
+body{
+background:#0f172a;
+color:white;
+font-family:Arial;
+text-align:center;
+}
+
+h1{
+margin-top:20px;
+}
+
+#gallery{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:15px;
+padding:20px;
+}
+
+.card{
+background:#1e293b;
+padding:10px;
+border-radius:10px;
+}
+
+img{
+width:250px;
+border-radius:10px;
+}
+
+.username{
+margin-top:5px;
+font-size:14px;
+color:#94a3b8;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>📸 Live Photo Dashboard</h1>
+
+<div id="gallery"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+const socket = io();
+
+socket.on("live-photo", (data)=>{
+
+const gallery = document.getElementById("gallery");
+
+const card = document.createElement("div");
+card.className = "card";
+
+const img = document.createElement("img");
+img.src = data.image;
+
+const name = document.createElement("div");
+name.className = "username";
+name.innerText = data.user;
+
+card.appendChild(img);
+card.appendChild(name);
+
+gallery.prepend(card);
+
+});
+
+</script>
+
+</body>
+
+</html>
