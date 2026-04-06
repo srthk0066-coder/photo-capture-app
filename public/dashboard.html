@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Live Dashboard</title>
+
+<style>
+
+body{
+background:#0f172a;
+color:white;
+font-family:Arial;
+margin:0;
+padding:20px;
+}
+
+h1{
+text-align:center;
+}
+
+.container{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+gap:20px;
+margin-top:20px;
+}
+
+.card{
+background:#1e293b;
+padding:15px;
+border-radius:12px;
+box-shadow:0 0 10px rgba(0,0,0,0.4);
+}
+
+.card h3{
+margin:0 0 10px 0;
+}
+
+img{
+width:100%;
+border-radius:8px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Live Users Dashboard</h1>
+
+<div class="container" id="users"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+const socket = io();
+
+socket.on("live-photo", (data)=>{
+
+let userDiv = document.getElementById(data.user);
+
+if(!userDiv){
+
+userDiv = document.createElement("div");
+userDiv.className = "card";
+userDiv.id = data.user;
+
+userDiv.innerHTML = `
+<h3>${data.user}</h3>
+<img id="img-${data.user}">
+`;
+
+document.getElementById("users").appendChild(userDiv);
+
+}
+
+document.getElementById(`img-${data.user}`).src = data.image;
+
+});
+
+</script>
+
+</body>
+
+</html>

